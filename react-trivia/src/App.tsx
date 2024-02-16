@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { React, useState } from "react";
 
 function App() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -58,13 +58,18 @@ function App() {
         <h3>
           Question: {currentQuestion + 1} out of {questions.length}
         </h3>
-        <h3>What year was the Constitution of America written? </h3>
+        <h3>{questions[currentQuestion].text}</h3>
         <ul>
-          <li> option 1</li>
-          <li> option 2</li>
-          <li> option 3</li>
-          <li> option 4</li>
-          <li> option 5</li>
+          {questions[currentQuestion].options.map((option) => {
+            return (
+              <li
+                key={option.id}
+                onClick={() => optionClicked(option.isCorrect)}
+              >
+                {option.text}
+              </li>
+            );
+          })}
         </ul>
       </center>
     </>
