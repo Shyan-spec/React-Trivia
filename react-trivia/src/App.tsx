@@ -1,7 +1,10 @@
-import { React, useState } from "react";
+import { useState } from "react";
+import React from "react";
 
 function App() {
+  const [finalResults, setShowResults] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
   const questions = [
     {
       text: "What is the capital of America?",
@@ -49,31 +52,61 @@ function App() {
       ],
     },
   ];
+  const optionClicked = (isCorrect) => {
+    // Increment the score
+    if (isCorrect) {
+      setScore(score + 1);
+    }
 
+    if (currentQuestion + 1 < questions.length) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      setShowResults(true);
+    }
+  };
+
+  /* Resets the game back to default */
+  const restartGame = () => {
+    setScore(0);
+    setCurrentQuestion(0);
+    setShowResults(false);
+  };
   return (
-    <>
-      <center>
-        <h1>USA Quiz</h1>
-        <h3>Current Score: 1</h3>
-        <h3>
-          Question: {currentQuestion + 1} out of {questions.length}
-        </h3>
-        <h3>{questions[currentQuestion].text}</h3>
-        <ul>
-          {questions[currentQuestion].options.map((option) => {
-            return (
-              <li
-                key={option.id}
-                onClick={() => optionClicked(option.isCorrect)}
-              >
-                {option.text}
-              </li>
-            );
-          })}
-        </ul>
-      </center>
-    </>
+    <div className="center">
+      <h1>USA Quiz 🇺🇸</h1>
+
+      <h2>Score: {score}</h2>
+      {finalResults ? (
+        /* 4. Final Results */
+        <div className="final-results">
+          <h1>Final Results</h1>
+          <h2>
+            {score} out of {questions.length} correct - (
+            {(score / questions.length) * 100}%)
+          </h2>
+          <button onClick={() => restartGame()}>Restart game</button>
+        </div>
+      ) : (
+        <div>
+          <h2>
+            Question: {currentQuestion + 1} out of {questions.length}
+          </h2>
+          <h3>{questions[currentQuestion].text}</h3>
+          <ul>
+            {questions[currentQuestion].options.map((option) => {
+              return (
+                <li
+                  key={option.id}
+                  onClick={() => optionClicked(option.isCorrect)}
+                >
+                  {option.text}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+    </div>
   );
 }
-
 export default App;
