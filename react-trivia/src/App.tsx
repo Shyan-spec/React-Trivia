@@ -2,7 +2,7 @@ import Axios from "axios";
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import Questionaire from "./Component/Questionaire";
-
+import Header from "./Component/Header";
 const API_URL =
   "https://opentdb.com/api.php?amount=20&category=18&difficulty=easy&type=multiple";
 
@@ -66,7 +66,7 @@ function App() {
   };
   return questions.length > 0 ? (
     <div className="container">
-      <h1>Computer Quiz 🇺🇸</h1>
+      <Header />
       <h2>Score: {score}</h2>
       <h2>
         {currentIndex + 1} out of {questions.length} Questions
