@@ -5,6 +5,7 @@ function App() {
   const [finalResults, setShowResults] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
+  const [optionChosen, setOptionChosen] = useState("");
   const questions = [
     {
       text: "What is the capital of America?",
@@ -52,6 +53,17 @@ function App() {
       ],
     },
   ];
+  const chooseOption = (option) => {
+    setOptionChosen(option);
+  };
+  const nextQuestion = () => {
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    }
+  };
+  const backQuestion = () => {
+    if (currentQuestion > 0) setCurrentQuestion(currentQuestion - 1);
+  };
   const optionClicked = (isCorrect) => {
     // Increment the score
     if (isCorrect) {
@@ -84,7 +96,9 @@ function App() {
             {score} out of {questions.length} correct - (
             {(score / questions.length) * 100}%)
           </h2>
-          <button onClick={() => restartGame()}>Restart game</button>
+          <button className="btn btn-primary" onClick={() => restartGame()}>
+            Restart game
+          </button>
         </div>
       ) : (
         <div>
@@ -104,6 +118,12 @@ function App() {
               );
             })}
           </ul>
+          <button onClick={backQuestion} id="nextQuestion">
+            Previous Question
+          </button>
+          <button onClick={nextQuestion} id="nextQuestion">
+            Next Question
+          </button>
         </div>
       )}
     </div>
