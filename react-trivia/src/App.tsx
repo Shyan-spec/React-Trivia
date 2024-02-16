@@ -1,132 +1,94 @@
-import { useState } from "react";
-import React from "react";
+import Axios from "axios";
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import Questionaire from "./Component/Questionaire";
+
+const API_URL =
+  "https://opentdb.com/api.php?amount=20&category=18&difficulty=easy&type=multiple";
 
 function App() {
-  const [finalResults, setShowResults] = useState(false);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [questions, setQuestions] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
-  const [optionChosen, setOptionChosen] = useState("");
-  const questions = [
-    {
-      text: "What is the capital of America?",
-      options: [
-        { id: 0, text: "New York City", isCorrect: false },
-        { id: 1, text: "Boston", isCorrect: false },
-        { id: 2, text: "Santa Fe", isCorrect: false },
-        { id: 3, text: "Washington DC", isCorrect: true },
-      ],
-    },
-    {
-      text: "What year was the Constitution of America written?",
-      options: [
-        { id: 0, text: "1787", isCorrect: true },
-        { id: 1, text: "1776", isCorrect: false },
-        { id: 2, text: "1774", isCorrect: false },
-        { id: 3, text: "1826", isCorrect: false },
-      ],
-    },
-    {
-      text: "Who was the second president of the US?",
-      options: [
-        { id: 0, text: "John Adams", isCorrect: true },
-        { id: 1, text: "Paul Revere", isCorrect: false },
-        { id: 2, text: "Thomas Jefferson", isCorrect: false },
-        { id: 3, text: "Benjamin Franklin", isCorrect: false },
-      ],
-    },
-    {
-      text: "What is the largest state in the US?",
-      options: [
-        { id: 0, text: "California", isCorrect: false },
-        { id: 1, text: "Alaska", isCorrect: true },
-        { id: 2, text: "Texas", isCorrect: false },
-        { id: 3, text: "Montana", isCorrect: false },
-      ],
-    },
-    {
-      text: "Which of the following countries DO NOT border the US?",
-      options: [
-        { id: 0, text: "Canada", isCorrect: false },
-        { id: 1, text: "Russia", isCorrect: true },
-        { id: 2, text: "Cuba", isCorrect: true },
-        { id: 3, text: "Mexico", isCorrect: false },
-      ],
-    },
-  ];
-  const chooseOption = (option) => {
-    setOptionChosen(option);
-  };
-  const nextQuestion = () => {
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    }
-  };
-  const backQuestion = () => {
-    if (currentQuestion > 0) setCurrentQuestion(currentQuestion - 1);
-  };
-  const optionClicked = (isCorrect) => {
-    // Increment the score
-    if (isCorrect) {
-      setScore(score + 1);
+  const [showAnswers, setShowAnswers] = useState(false);
+
+  useEffect(() => {
+    Axios.get(API_URL)
+      .then((res) => res.data)
+      .then((data) => {
+        const questions = data.results.map((question) => ({
+          ...question,
+          answers: [
+            question.correct_answer,
+            ...question.incorrect_answers,
+          ].sort(() => Math.random() - 0.5),
+        }));
+        setQuestions(questions);
+      });
+  }, []);
+
+  const handleAnswer = (answer) => {
+    if (!showAnswers) {
+      if (answer === questions[currentIndex].correct_answer) {
+        setScore(score + 1);
+      }
     }
 
-    if (currentQuestion + 1 < questions.length) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      setShowResults(true);
-    }
+    setShowAnswers(true);
   };
 
-  /* Resets the game back to default */
+  const handleNextQuestion = () => {
+    setCurrentIndex(currentIndex + 1);
+    setShowAnswers(false);
+  };
+
+  const handlePreviousQuestion = () => {
+    if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
+    setShowAnswers(false);
+  };
   const restartGame = () => {
     setScore(0);
-    setCurrentQuestion(0);
-    setShowResults(false);
+    setCurrentIndex(0);
+    useEffect(() => {
+      Axios.get(API_URL)
+        .then((res) => res.data)
+        .then((data) => {
+          const questions = data.results.map((question) => ({
+            ...question,
+            answers: [
+              question.correct_answer,
+              ...question.incorrect_answers,
+            ].sort(() => Math.random() - 0.5),
+          }));
+          setQuestions(questions);
+        });
+    }, []);
   };
-  return (
-    <div className="center">
-      <h1>USA Quiz 🇺🇸</h1>
-
+  return questions.length > 0 ? (
+    <div className="container">
+      <h1>Computer Quiz 🇺🇸</h1>
       <h2>Score: {score}</h2>
-      {finalResults ? (
-        /* 4. Final Results */
-        <div className="final-results">
-          <h1>Final Results</h1>
-          <h2>
-            {score} out of {questions.length} correct - (
-            {(score / questions.length) * 100}%)
-          </h2>
-          <button className="btn btn-primary" onClick={() => restartGame()}>
-            Restart game
-          </button>
-        </div>
+      <h2>
+        {currentIndex + 1} out of {questions.length} Questions
+      </h2>
+      <button onClick={restartGame} className="next-question">
+        Restart Game
+      </button>
+      {currentIndex >= questions.length ? (
+        <h1>Game Ended, Your Score is {(score / questions.length) * 100}%</h1>
       ) : (
-        <div>
-          <h2>
-            Question: {currentQuestion + 1} out of {questions.length}
-          </h2>
-          <h3>{questions[currentQuestion].text}</h3>
-          <ul>
-            {questions[currentQuestion].options.map((option) => {
-              return (
-                <li
-                  key={option.id}
-                  onClick={() => optionClicked(option.isCorrect)}
-                >
-                  {option.text}
-                </li>
-              );
-            })}
-          </ul>
-          <button onClick={backQuestion} id="nextQuestion">
-            Previous Question
-          </button>
-          <button onClick={nextQuestion} id="nextQuestion">
-            Next Question
-          </button>
-        </div>
+        <Questionaire
+          handleAnswer={handleAnswer}
+          showAnswers={showAnswers}
+          handleNextQuestion={handleNextQuestion}
+          handlePreviousQuestion={handlePreviousQuestion}
+          data={questions[currentIndex]}
+        />
       )}
     </div>
+  ) : (
+    <div className="container">..Loading</div>
   );
 }
+
 export default App;
