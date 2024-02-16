@@ -30,12 +30,12 @@ function Questionaire({
       </div>
       {showAnswers && (
         <>
-          <button onClick={handlePreviousQuestion} className="next-question">
-            Previous Question
-          </button>
-          <br></br>
           <button onClick={handleNextQuestion} className="next-question">
             Next Question
+          </button>
+          <br></br>
+          <button onClick={handlePreviousQuestion} className="next-question">
+            Previous Question
           </button>
         </>
       )}
