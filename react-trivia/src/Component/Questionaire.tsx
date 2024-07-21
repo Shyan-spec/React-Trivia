@@ -1,4 +1,17 @@
-import React from "react";
+
+interface QuestionData {
+  question: string;
+  correct_answer: string;
+  answers: string[];
+}
+
+interface QuestionaireProps {
+  handleAnswer: (answer: string) => void;
+  showAnswers: boolean;
+  handleNextQuestion: () => void;
+  handlePreviousQuestion: () => void;
+  data: QuestionData;
+}
 
 function Questionaire({
   handleAnswer,
@@ -6,14 +19,14 @@ function Questionaire({
   handleNextQuestion,
   handlePreviousQuestion,
   data: { question, correct_answer, answers },
-}) {
+} : QuestionaireProps) {
   return (
     <>
       <div className="questionClass">
         <h1 dangerouslySetInnerHTML={{ __html: question }} />
       </div>
       <div className="button-overall">
-        {answers.map((answer, idx) => {
+        {answers.map((answer: string) => {
           const specialClassName = showAnswers
             ? answer === correct_answer
               ? "green-button"
