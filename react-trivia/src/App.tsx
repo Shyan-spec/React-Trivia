@@ -4,7 +4,7 @@ import "./App.css";
 import Questionaire from "./Component/Questionaire";
 import Header from "./Component/Header";
 const API_URL =
-  "https://opentdb.com/api.php?amount=20&category=18&difficulty=easy&type=multiple";
+  "https://opentdb.com/api.php?amount=30&category=15&difficulty=easy&type=multiple";
 
 function App() {
   const [questions, setQuestions] = useState([]);
